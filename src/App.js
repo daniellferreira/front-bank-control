@@ -1,23 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import HomeScreen from "./screens/HomeScreen";
+import OperationScreen from "./screens/OperationScreen";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+global.currencyFormat = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <div>
+          <NavBar />
+          <Switch>
+            <Route
+              path="/deposit"
+              render={() => <OperationScreen operation="deposit" />}
+            />
+            <Route
+              path="/draft"
+              render={() => <OperationScreen operation="draft" />}
+            />
+            <Route
+              path="/payment"
+              render={() => <OperationScreen operation="payment" />}
+            />
+            <Route path="/" component={HomeScreen} />
+          </Switch>
+        </div>
+      </Router>
     </div>
   );
 }

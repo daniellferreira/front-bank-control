@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_BACKEND_URL = "http://localhost:3010";
+const BASE_BACKEND_URL = "https://ts-bank-control-api.herokuapp.com";
 
 const services = {
   getCreatedAccount: () => axios.get(`${BASE_BACKEND_URL}/account`),

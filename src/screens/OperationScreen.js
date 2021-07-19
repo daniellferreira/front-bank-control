@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import services from "../services";
 import CurrencyInput from "react-currency-input-field";
 
-const ticketCodeLength = 47;
+const TICKET_CODE_LENGTH = 47;
 
 const buttonLabel = {
   deposit: "Realizar depósito",
@@ -21,7 +21,7 @@ const service = {
 const OperationScreen = ({ operation }) => {
   const history = useHistory();
   const [amount, setAmount] = useState(0);
-  const [ticketCode, setTicketCode] = useState("");
+  const [ticketCode, setTicketCode] = useState();
 
   const baseValidation = () => {
     if (amount <= 0) {
@@ -31,22 +31,9 @@ const OperationScreen = ({ operation }) => {
     return true;
   };
 
-  const operationValidation = () => {
-    // validacoes por operacao, caso nao haja validacao aplicada ou nao ocorra problema de validacao cai no caso padrao que é retornar true
-    // eslint-disable-next-line default-case
-    switch (operation) {
-      case "payment":
-        if (!ticketCode || ticketCode.length !== ticketCodeLength) {
-          alert(`Linha digitável deve conter ${ticketCodeLength} caracteres`);
-          return false;
-        }
-    }
-    return true;
-  };
-
   const handleSumbit = async () => {
     try {
-      if (!baseValidation() || !operationValidation()) {
+      if (!baseValidation()) {
         return;
       }
 
@@ -64,8 +51,16 @@ const OperationScreen = ({ operation }) => {
 
       history.replace("/");
     } catch (error) {
+      if (error?.response && error.response?.data?.message) {
+        console.error(error.response);
+        alert(error.response.data.message);
+        return;
+      }
+
       console.error(error);
-      alert("Erro ao realizar operação, verificar console!");
+      alert(
+        error.message || "Erro inesperado no servidor. Verifique o console!"
+      );
     }
   };
 
@@ -99,7 +94,7 @@ const OperationScreen = ({ operation }) => {
                   type="text"
                   id="ticketCode"
                   name="ticket_code"
-                  maxLength={ticketCodeLength}
+                  maxLength={TICKET_CODE_LENGTH}
                   placeholder="74891121316679260101611851471075385910000011990"
                   onChange={(event) => setTicketCode(event.target.value)}
                 ></Form.Control>
